@@ -17,7 +17,7 @@ def test_emojis_loaded():
     assert len(EMOJIS), "At least some emojis should have loaded"
 
 
-@pytest.mark.parametrize("name,emoji", [(n, e) for n, e in EMOJIS.items()])
+@pytest.mark.parametrize("name,emoji", list(EMOJIS.items()))
 def test_emojis_well_formed(name, emoji):
     image = emoji.image()
     assert (
