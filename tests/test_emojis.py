@@ -4,9 +4,9 @@ from de.emojis import (
     EMOJI_HEIGHT,
     EMOJI_MAX_SIZE,
     EMOJI_WIDTH,
+    image_base64,
+    image_size,
     load_emojis,
-    png_file,
-    png_size,
 )
 
 
@@ -26,7 +26,7 @@ def test_emojis_well_formed(name, emoji):
     assert (
         image.height == EMOJI_HEIGHT
     ), f"Emoji {name} should be {EMOJI_HEIGHT} pixels tall!"
-    with png_file(image) as png:
-        assert (
-            png_size(png) <= EMOJI_MAX_SIZE
-        ), f"Emoji {name} should be less than {EMOJI_MAX_SIZE} bytes in size!"
+    assert (
+        image_size(image) <= EMOJI_MAX_SIZE
+    ), f"Emoji {name} should be less than {EMOJI_MAX_SIZE} bytes in size!"
+    assert "image/png;base64" in image_base64(image), "It should base64 encode!"

@@ -26,9 +26,12 @@ DOTENV_PATH = PROJECT_ROOT / ".env"
 
 Environment = MutableMapping[str, str]
 
-Loadable = Union[str]
+Loadable = Union[int, str]
 
-ENV_VAR_LOADERS: Dict[Type[Loadable], Callable[[str], Loadable]] = {str: lambda s: s}
+ENV_VAR_LOADERS: Dict[Type[Loadable], Callable[[str], Loadable]] = {
+    str: lambda s: s,
+    int: int,
+}
 
 
 def is_optional(tp):
@@ -52,12 +55,15 @@ class EnvVarLoadError(ConfigError):
 
 
 DiscordAPIToken = Optional[str]
+DiscordGuildID = int
 
 
 def _load_env_var(field: Field) -> Any:
     if field.name not in os.environ:
         if is_optional(field.type):
             return None
+        elif field.default:
+            return field.default
         raise NoEnvVarError(f"Missing environment variable {field.name}!")
 
     if is_optional(field.type):
@@ -77,9 +83,10 @@ def _load_env_var(field: Field) -> Any:
 class Config:
     DISCORD_API_TOKEN: DiscordAPIToken
     step_env: Environment
+    BOT_GUILD_ID: DiscordGuildID = 566333122615181327
 
     @classmethod
-    def load(cls, verbose: bool = False):
+    def load(cls):
         kwargs: Dict[str, Any] = dict()
 
         load_dotenv(dotenv_path=DOTENV_PATH)

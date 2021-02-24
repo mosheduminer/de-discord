@@ -7,7 +7,7 @@ import click
 import click_log
 
 from de.config import Config, PROJECT_ROOT, SCRIPTS_DIR, SRC_ROOT, TESTS_DIR
-from de.discord import discord_bot
+from de.discord import DiscordBot
 from de.logger import logger
 from de.steps import fmt_step, Step, StepError, steps as _steps
 
@@ -85,8 +85,10 @@ def async_command(fn: AsyncCLIHandler) -> CLIHandler:
 
 @async_command
 async def emoji_status(config):
-    async with discord_bot(config) as bot:
-        print(bot)
+    bot = DiscordBot(config)
+
+    async with bot.connection():
+        print(await bot.get_all_custom_emojis())
 
 
 if __name__ == "__main__":

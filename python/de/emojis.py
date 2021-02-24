@@ -1,9 +1,11 @@
+import base64
 from dataclasses import dataclass, field
 from functools import lru_cache
+from io import BytesIO
 import os
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Dict, IO
+from typing import Dict
 
 from PIL import Image
 
@@ -44,18 +46,25 @@ def load_emojis() -> EmojiMapping:
     }
 
 
-def png_file(image: Image) -> IO[bytes]:
-    f = NamedTemporaryFile(mode="w+b")
-    image.save(f, format="png")
-    f.seek(0)
-    return f
-
-
 SizeInBytes = int
 
 KILOBYTES = 1024
 EMOJI_MAX_SIZE: SizeInBytes = 256 * KILOBYTES
 
 
-def png_size(f: IO[bytes]) -> SizeInBytes:
-    return os.stat(f.name).st_size
+def image_size(image: Image, format: str = "png") -> SizeInBytes:
+    with NamedTemporaryFile(mode="w+b") as f:
+        image.save(f, format=format)
+        size = os.stat(f.name).st_size
+    return size
+
+
+ImageData = str
+
+
+def image_base64(image: Image, format: str = "png") -> ImageData:
+    f = BytesIO()
+    image.save(f, format=format)
+    return (
+        f"data:image/{format};base64,{base64.b64encode(f.getbuffer()).decode('ascii')}"
+    )
