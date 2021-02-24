@@ -22,6 +22,7 @@ def capture(fn: CLIHandler) -> CLIHandler:
         except StepError as exc:
             logger.error(f"Step {fmt_step(exc.step)} failed!")
             logger.debug(exc.env)
+            raise click.Abort()
         except Exception:
             logger.exception("FLAGRANT SYSTEM ERROR")
             raise click.Abort()
