@@ -1,10 +1,11 @@
 import functools
-from typing import Any, Callable, List
+from pathlib import Path
+from typing import Any, Callable, List, Union
 
 import click
 import click_log
 
-from de.config import Config, PROJECT_ROOT, SRC_ROOT
+from de.config import Config, PROJECT_ROOT, SCRIPTS_DIR, SRC_ROOT, TESTS_DIR
 from de.logger import logger
 from de.steps import fmt_step, Step, StepError, steps as _steps
 
@@ -48,12 +49,23 @@ def run_steps(name: str, steps: List[Step]):
 
 
 FORMAT_STEP: Step = ["black", PROJECT_ROOT]
-LINT_STEP: Step = ["flake8", PROJECT_ROOT]
-TYPE_CHECK_STEP: Step = ["mypy", SRC_ROOT]
+
+PYTHON_LINT_STEP: Step = ["flake8", PROJECT_ROOT]
+
+_SHELLCHECK_CMD: Union[Path, str] = "shellcheck"
+_SCRIPTS: List[Union[Path, str]] = list(SCRIPTS_DIR.glob("*.sh"))
+SHELL_LINT_STEP: Step = [_SHELLCHECK_CMD] + _SCRIPTS
+
+TYPE_CHECK_STEP: Step = ["mypy", SRC_ROOT, TESTS_DIR]
+
+TEST_STEP: Step = ["pytest"]
 
 format_ = run_steps("format", [FORMAT_STEP])
 type_check = run_steps("type_check", [TYPE_CHECK_STEP])
-lint = run_steps("lint", [TYPE_CHECK_STEP, LINT_STEP])
+lint = run_steps("lint", [PYTHON_LINT_STEP, SHELL_LINT_STEP])
+test = run_steps("test", [TEST_STEP])
+
+qa = run_steps("qa", [TYPE_CHECK_STEP, PYTHON_LINT_STEP, SHELL_LINT_STEP, TEST_STEP])
 
 if __name__ == "__main__":
     cli()
