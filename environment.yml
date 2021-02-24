@@ -1,0 +1,9 @@
+name: de_discord
+
+dependencies:
+  - python=3.9.2
+  - pip=21.0.1
+  - pip:
+      - "-r requirements.txt"
+      - "-r requirements-dev.txt"
+      - "-e ."
