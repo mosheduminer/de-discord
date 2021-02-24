@@ -1,11 +1,13 @@
+import asyncio
 import functools
 from pathlib import Path
-from typing import Any, Callable, List, Union
+from typing import Any, Awaitable, Callable, List, Union
 
 import click
 import click_log
 
 from de.config import Config, PROJECT_ROOT, SCRIPTS_DIR, SRC_ROOT, TESTS_DIR
+from de.discord import discord_bot
 from de.logger import logger
 from de.steps import fmt_step, Step, StepError, steps as _steps
 
@@ -13,6 +15,7 @@ click_log.basic_config(logger)
 
 
 CLIHandler = Callable[..., Any]
+AsyncCLIHandler = Callable[..., Awaitable[Any]]
 
 
 def capture(fn: CLIHandler) -> CLIHandler:
@@ -66,6 +69,25 @@ lint = run_steps("lint", [PYTHON_LINT_STEP, SHELL_LINT_STEP])
 test = run_steps("test", [TEST_STEP])
 
 qa = run_steps("qa", [TYPE_CHECK_STEP, PYTHON_LINT_STEP, SHELL_LINT_STEP, TEST_STEP])
+
+
+def async_command(fn: AsyncCLIHandler) -> CLIHandler:
+    @cli.command()
+    @click_log.simple_verbosity_option(logger)
+    @click.pass_obj
+    @functools.wraps(fn)
+    def command(*args, **kwargs):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(capture(fn)(*args, **kwargs))
+
+    return command
+
+
+@async_command
+async def emoji_status(config):
+    async with discord_bot(config) as bot:
+        print(bot)
+
 
 if __name__ == "__main__":
     cli()
