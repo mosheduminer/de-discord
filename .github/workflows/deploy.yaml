@@ -1,7 +1,8 @@
 name: Deploy
-on: push
-  branches:
-    - main
+on:
+  push:
+    branches:
+      - main
 jobs:
   sync-discord:
     name: Sync Discord state
