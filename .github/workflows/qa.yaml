@@ -5,21 +5,17 @@ jobs:
     name: Run QA checks
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: Update Conda environment
-        uses: matthewrmshin/conda-action@v1.1
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          args: conda env update
-      - name: Install the package
-        uses: matthewrmshin/conda-action@v1.1
-        with:
-          args: pip install .
+          python-version: 3.9.2
+      - name: Install the world
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install .
       - name: Run linting
-        uses: matthewrmshin/conda-action@v1.1
-        with:
-          args: de lint
+        run: de lint
       - name: Run tests
-        uses: matthewrmshin/conda-action@v1.1
-        with:
-          args: de test
+        run: de test
