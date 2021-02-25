@@ -1,0 +1,9 @@
+name: QA
+on: push
+jobs:
+  qa:
+    name: Run QA checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
