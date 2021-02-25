@@ -6,6 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Install shellcheck
+        run: apt install shellcheck
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -14,8 +16,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install .
+          pip install -e .
       - name: Run linting
-        run: de lint
+        run: |
+          flake8 ./
+          shellcheck ./scripts/*.sh
       - name: Run tests
-        run: de test
+        run: pytest
