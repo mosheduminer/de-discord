@@ -10,7 +10,7 @@ jobs:
       - name: WHERE THE F AM I
         uses: matthewrmshin/conda-action@v1.1
         with:
-          args: pwd
+          args: ls
       - name: Update Conda environment
         uses: matthewrmshin/conda-action@v1.1
         with:
