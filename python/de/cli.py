@@ -84,8 +84,6 @@ def async_command(fn: AsyncCLIHandler) -> CLIHandler:
 @click.option("--yarly", is_flag=True, default=False)
 @click.option("--dry-run", is_flag=True, default=False)
 async def sync_emojis(config, yarly, dry_run):
-    print(config)
-    raise Exception("IM THE ORIGINAL CHILD CLOUD OUTLET")
     bot = DiscordBot(config)
 
     async with bot.connection():
