@@ -140,11 +140,16 @@ class Changeset:
     def diff(cls, upstream: List[EmojiResource], local: EmojiMapping) -> "Changeset":
         upstream_lookup: Dict[str, EmojiResource] = dict()
         upstream_keys: Set[str] = set()
+        managed_keys: Set[str] = set()
         local_keys: Set[str] = set(local.keys())
 
         for up in upstream:
-            upstream_keys.add(up.name)
             upstream_lookup[up.name] = up
+            if up.managed:
+                managed_keys.add(up.name)
+                logger.info(f"Emoji {up.name} is managed, so leaving it alone...")
+            else:
+                upstream_keys.add(up.name)
 
         return cls(
             replace=[
@@ -152,7 +157,9 @@ class Changeset:
                 for key in upstream_keys & local_keys
             ],
             remove=[(key, upstream_lookup[key]) for key in upstream_keys - local_keys],
-            create=[(key, local[key]) for key in local_keys - upstream_keys],
+            create=[
+                (key, local[key]) for key in local_keys - upstream_keys - managed_keys
+            ],
         )
 
     def report(self) -> pd.DataFrame:
