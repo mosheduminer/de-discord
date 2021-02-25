@@ -1,5 +1,8 @@
 name: de_discord
 
+channels:
+  - conda-forge
+  - main
 dependencies:
   - python=3.9.2
   - pip=21.0.1
