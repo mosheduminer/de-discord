@@ -12,7 +12,9 @@ want to add in the `./emojis` directory.
 Any format that pillow supports will work, though all images are currently
 normalized into non-animated PNGs (easy to change if you want to make a PR).
 Your image should ideally be 128px by 128px, but the CI system will
-automatically resize it so don't stress too hard.
+automatically resize it so don't stress too hard. If you have imagemagick
+installed, you can resize it with something like
+`convert "$INPUT_IMAGE" -resize 128x128> "$OUTPUT_IMAGE"`.
 
 The filename is used to set the name of the emoji. For example,
 `./emojis/josh.png` would turn into the `:josh:` emoji in Discord.
