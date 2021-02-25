@@ -19,7 +19,7 @@ jobs:
         uses: matthewrmshin/conda-action@v1.1
         with:
           args: de lint
-       - name: Run tests
+      - name: Run tests
         uses: matthewrmshin/conda-action@v1.1
         with:
           args: de test
