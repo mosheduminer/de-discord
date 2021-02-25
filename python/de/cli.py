@@ -8,7 +8,6 @@ import click_log
 
 from de.config import Config, PROJECT_ROOT, SCRIPTS_DIR, SRC_ROOT, TESTS_DIR
 from de.discord import DiscordBot
-from de.emojis import load_emojis
 from de.logger import logger
 from de.steps import fmt_step, Step, StepError, steps as _steps
 
@@ -52,16 +51,13 @@ def run_steps(name: str, steps: List[Step]):
     )
 
 
-FORMAT_STEP: Step = ["black", PROJECT_ROOT]
-
-PYTHON_LINT_STEP: Step = ["flake8", PROJECT_ROOT]
-
 _SHELLCHECK_CMD: Union[Path, str] = "shellcheck"
 _SCRIPTS: List[Union[Path, str]] = list(SCRIPTS_DIR.glob("*.sh"))
+
+FORMAT_STEP: Step = ["black", PROJECT_ROOT]
+PYTHON_LINT_STEP: Step = ["flake8", PROJECT_ROOT]
 SHELL_LINT_STEP: Step = [_SHELLCHECK_CMD] + _SCRIPTS
-
 TYPE_CHECK_STEP: Step = ["mypy", SRC_ROOT, TESTS_DIR]
-
 TEST_STEP: Step = ["pytest"]
 
 format_ = run_steps("format", [FORMAT_STEP])
@@ -69,7 +65,7 @@ type_check = run_steps("type_check", [TYPE_CHECK_STEP])
 lint = run_steps("lint", [PYTHON_LINT_STEP, SHELL_LINT_STEP])
 test = run_steps("test", [TEST_STEP])
 
-qa = run_steps("qa", [TYPE_CHECK_STEP, PYTHON_LINT_STEP, SHELL_LINT_STEP, TEST_STEP])
+qa = run_steps("qa", [PYTHON_LINT_STEP, SHELL_LINT_STEP, TEST_STEP])
 
 
 def async_command(fn: AsyncCLIHandler) -> CLIHandler:
@@ -85,14 +81,22 @@ def async_command(fn: AsyncCLIHandler) -> CLIHandler:
 
 
 @async_command
-async def emoji_status(config):
-    local = load_emojis()
+@click.option("--yarly", is_flag=True, default=False)
+@click.option("--dry-run", is_flag=True, default=False)
+async def sync_emoji(config, yarly, dry_run):
     bot = DiscordBot(config)
 
     async with bot.connection():
         changeset = await bot.get_custom_emoji_changeset()
 
         click.echo(changeset.report())
+
+        if dry_run:
+            logger.info("Exiting after a dry run...")
+        elif yarly or click.confirm("Do you want to apply these changes?"):
+            await bot.apply_custom_emoji_changeset(changeset)
+        else:
+            logger.warning("Not doing!")
 
 
 if __name__ == "__main__":
