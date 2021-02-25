@@ -130,9 +130,24 @@ def report_row(
     return row
 
 
+class UpdateAction:
+    def __init__(self, slug: str):
+        self._slug = slug
+
+    def __str__(self):
+        return self._slug
+
+    def __repr__(self):
+        return f"<{self._slug}>"
+
+
+EDIT = UpdateAction("edit")
+REPLACE = UpdateAction("replace")
+
+
 @dataclass
 class Changeset:
-    replace: List[Tuple[str, EmojiResource, Emoji]]
+    update: List[Tuple[str, EmojiResource, Emoji]]
     remove: List[Tuple[str, EmojiResource]]
     create: List[Tuple[str, Emoji]]
 
@@ -152,7 +167,7 @@ class Changeset:
                 upstream_keys.add(up.name)
 
         return cls(
-            replace=[
+            update=[
                 (key, upstream_lookup[key], local[key])
                 for key in upstream_keys & local_keys
             ],
@@ -162,11 +177,11 @@ class Changeset:
             ],
         )
 
-    def report(self) -> pd.DataFrame:
+    def report(self, update_action: UpdateAction = EDIT) -> pd.DataFrame:
         table: List[ReportRow] = []
 
-        for name, r, e in self.replace:
-            table.append(report_row(name, "replace", resource=r, emoji=e))
+        for name, r, e in self.update:
+            table.append(report_row(name, str(update_action), resource=r, emoji=e))
         for name, r in self.remove:
             table.append(report_row(name, "remove", resource=r))
         for name, e in self.create:
@@ -295,15 +310,20 @@ class DiscordBot:
             await self.create_custom_emoji(emoji, roles=roles, reason=reason),
         )
 
-    async def apply_custom_emoji_changeset(self, changeset: Changeset):
+    async def apply_custom_emoji_changeset(
+        self, changeset: Changeset, update_action: UpdateAction = EDIT
+    ):
         for name, emoji in changeset.create:
             logger.info(f"Creating emoji {name}...")
             await self.create_custom_emoji(emoji, reason="Creating a fresh emoji!")
         for name, resource in changeset.remove:
             logger.info(f"Removing emoji {name}...")
             await self.delete_custom_emoji(resource.id)
-        for name, resource, emoji in changeset.replace:
-            logger.info(f"Individually replacing emoji {name}...")
-            await self.replace_custom_emoji(
-                resource.id, emoji, reason="Issuing a blind replace!"
-            )
+        for name, resource, emoji in changeset.update:
+            if update_action == REPLACE:
+                logger.info(f"Individually replacing emoji {name}...")
+                await self.replace_custom_emoji(
+                    resource.id, emoji, reason="Issuing a blind replace!"
+                )
+            else:
+                logger.info(f"I would edit emoji {name} if that were implemented...")

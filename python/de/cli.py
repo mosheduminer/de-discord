@@ -7,7 +7,7 @@ import click
 import click_log
 
 from de.config import Config, PROJECT_ROOT, SCRIPTS_DIR, SRC_ROOT, TESTS_DIR
-from de.discord import DiscordBot
+from de.discord import EDIT, DiscordBot, REPLACE
 from de.logger import logger
 from de.steps import fmt_step, Step, StepError, steps as _steps
 
@@ -80,21 +80,37 @@ def async_command(fn: AsyncCLIHandler) -> CLIHandler:
     return command
 
 
+class UpdateActionParam(click.ParamType):
+    name = "update_action"
+
+    def convert(self, value, param, ctx):
+        for action in [EDIT, REPLACE]:
+            if value == action or value == str(action):
+                return action
+        self.fail(f"Unexpected value {value!r}!", param, ctx)
+
+
+UPDATE_ACTION = UpdateActionParam()
+
+
 @async_command
 @click.option("--yarly", is_flag=True, default=False)
 @click.option("--dry-run", is_flag=True, default=False)
-async def sync_emojis(config, yarly, dry_run):
+@click.option("--update-action", type=UPDATE_ACTION, default=EDIT)
+async def sync_emojis(config, yarly, dry_run, update_action):
     bot = DiscordBot(config)
 
     async with bot.connection():
         changeset = await bot.get_custom_emoji_changeset()
 
-        click.echo(changeset.report())
+        click.echo(changeset.report(update_action=update_action))
 
         if dry_run:
             logger.info("Exiting after a dry run...")
         elif yarly or click.confirm("Do you want to apply these changes?"):
-            await bot.apply_custom_emoji_changeset(changeset)
+            await bot.apply_custom_emoji_changeset(
+                changeset, update_action=update_action
+            )
         else:
             logger.warning("Not doing!")
 
