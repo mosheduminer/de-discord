@@ -1,0 +1,24 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  sync-discord:
+    name: Sync Discord state
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9.2
+      - name: Install the world
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+      - name: Sync emojis
+        env:
+          DISCORD_API_TOKEN: ${{ secrets.DISCORD_API_TOKEN }}
+        run: de sync-emojis --yarly

@@ -83,7 +83,7 @@ def async_command(fn: AsyncCLIHandler) -> CLIHandler:
 @async_command
 @click.option("--yarly", is_flag=True, default=False)
 @click.option("--dry-run", is_flag=True, default=False)
-async def sync_emoji(config, yarly, dry_run):
+async def sync_emojis(config, yarly, dry_run):
     bot = DiscordBot(config)
 
     async with bot.connection():

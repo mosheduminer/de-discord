@@ -16,8 +16,13 @@ from typing import (
 from dotenv import load_dotenv
 
 MODULE_DIR = Path(__file__).parent
-SRC_ROOT = MODULE_DIR.parent
-PROJECT_ROOT = SRC_ROOT.parent
+
+if "GITHUB_WORKSPACE" in os.environ:
+    PROJECT_ROOT = Path(os.environ["GITHUB_WORKSPACE"])
+    SRC_ROOT = PROJECT_ROOT / "python"
+else:
+    SRC_ROOT = MODULE_DIR.parent
+    PROJECT_ROOT = SRC_ROOT.parent
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 STUBS_DIR = PROJECT_ROOT / "stubs"
 EMOJIS_DIR = PROJECT_ROOT / "emojis"
