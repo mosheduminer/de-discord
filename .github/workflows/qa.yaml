@@ -14,4 +14,4 @@ jobs:
       - name: Run QA steps
         uses: matthewrmshin/conda-action@v1.1
         with:
-          args: de qa
+          args: PYTHONPATH=./python/de/cli.py qa
