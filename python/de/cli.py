@@ -7,7 +7,7 @@ import click
 import click_log
 
 from de.config import Config, PROJECT_ROOT, SCRIPTS_DIR, SRC_ROOT, TESTS_DIR
-from de.discord import EDIT, DiscordBot, REPLACE
+from de.discord import DiscordBot, EDIT, REPLACE
 from de.logger import logger
 from de.steps import fmt_step, Step, StepError, steps as _steps
 
