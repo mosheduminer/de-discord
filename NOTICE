@@ -1,1 +1,13 @@
-Python scripts and GitHub Actions written by Josh Holbrook in 2021.
+Python scripts and GitHub Actions written by Josh Holbrook in 2021 and are
+covered by the Apache 2.0 license.
+
+The icons are from various sources and are "poorly licensed", but we've tried to
+be good about attribution:
+
+- The AWS emojis - https://github.com/Surgo/aws_emojipacks
+- The Spark and BigQuery icons - https://vecta.io
+- The PostgreSQL icon - https://iconscout.com/icons/postgresql
+- The MySQL icon - https://github.com/Remix-Design/RemixIcon/issues/234
+- The Dask icon - https://docs.dask.org/en/latest/logos.html
+- The Airflow icon - https://airflow.apache.org/docs/apache-airflow/stable/
+- The dbt icon - https://twitter.com/getdbt (their profile photo)
