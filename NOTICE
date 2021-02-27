@@ -1,8 +1,8 @@
 Python scripts and GitHub Actions written by Josh Holbrook in 2021 and are
 covered by the Apache 2.0 license.
 
-The icons are from various sources and are "poorly licensed", but we've tried to
-be good about attribution:
+The icons are from various sources and are "poorly licensed" - most of them were
+found on Google image search - but we've tried to be good about attribution:
 
 - The AWS emojis - https://github.com/Surgo/aws_emojipacks
 - The Spark and BigQuery icons - https://vecta.io
@@ -13,3 +13,6 @@ be good about attribution:
 - The dbt icon - https://twitter.com/getdbt (their profile photo)
 - The Python logo - https://commons.wikimedia.org/wiki/File:Python-logo-notext.svg
 - The Scala logo - https://www.scala-lang.org/
+- The AWS logo - https://en.wikipedia.org/wiki/Amazon_Web_Services
+- The GCP logo - https://www.gend.co/google-cloud-platform
+- The Azure logo - https://www.flaticon.com/free-icon/azure_873107
