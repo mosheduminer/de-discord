@@ -33,7 +33,10 @@ class Emoji:
 
     @lru_cache()
     def image(self):
-        return Image.open(str(self.path)).resize(size=EMOJI_SIZE)
+        original = Image.open(str(self.path))
+        im = original.crop(original.getbbox())
+        im.thumbnail(size=EMOJI_SIZE)
+        return im
 
 
 EmojiMapping = Dict[EmojiName, Emoji]
