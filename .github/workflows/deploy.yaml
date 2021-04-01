@@ -21,4 +21,6 @@ jobs:
       - name: Sync emojis
         env:
           DISCORD_API_TOKEN: ${{ secrets.DISCORD_API_TOKEN }}
-        run: de sync-emojis --yarly
+        run: |
+          alembic upgrade head
+          de sync-emojis --yarly
