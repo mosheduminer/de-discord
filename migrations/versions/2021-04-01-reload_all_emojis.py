@@ -1,14 +1,12 @@
 """Force reload all emojis
 
 Revision ID: f4cc442b3233
-Revises: 
+Revises: (nothing)
 Create Date: 2021-04-01 00:45:27.076123+00:00
 
 """
 
 import asyncio
-from alembic import op
-import sqlalchemy as sa
 
 from de.config import Config
 from de.discord import DiscordBot, REPLACE
@@ -28,6 +26,7 @@ async def run_migration():
 
     async with bot.connection():
         changeset = await bot.get_custom_emoji_changeset()
+        logger.info("Replacing every emoji (this will take a while)...")
 
         await bot.apply_custom_emoji_changeset(changeset, update_action=REPLACE)
 
