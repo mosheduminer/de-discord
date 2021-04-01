@@ -21,4 +21,14 @@ jobs:
       - name: Sync emojis
         env:
           DISCORD_API_TOKEN: ${{ secrets.DISCORD_API_TOKEN }}
-        run: de sync-emojis --yarly
+        run: |
+          alembic upgrade head
+          de sync-emojis --yarly
+      - uses: EndBug/add-and-commit@v7
+        with:
+          if: "!contains(github.event.head_commit.message, 'Update migration status'"
+          add: migrations.db
+          author_name: GitHub CI Bot
+          author_email: josh.holbrook@gmail.com
+          message: "Update migration status"
+          push: true
