@@ -21,11 +21,11 @@ def test_emojis_loaded():
 def test_emojis_well_formed(name, emoji):
     image = emoji.image()
     assert (
-        image.width == EMOJI_WIDTH
-    ), f"Emoji {name} should be {EMOJI_WIDTH} pixels wide!"
+        image.width <= EMOJI_WIDTH
+    ), f"Emoji {name} should be at most {EMOJI_WIDTH} pixels wide!"
     assert (
-        image.height == EMOJI_HEIGHT
-    ), f"Emoji {name} should be {EMOJI_HEIGHT} pixels tall!"
+        image.height <= EMOJI_HEIGHT
+    ), f"Emoji {name} should be at most {EMOJI_HEIGHT} pixels tall!"
     assert (
         image_size(image) <= EMOJI_MAX_SIZE
     ), f"Emoji {name} should be less than {EMOJI_MAX_SIZE} bytes in size!"
